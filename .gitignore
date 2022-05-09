@@ -1,5 +1,8 @@
 bin/
 obj/
+.idea/
+
+cmake-build-*/
 
 gmon.out
 
