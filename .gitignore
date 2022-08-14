@@ -1,6 +1,8 @@
 bin/
+build/
 obj/
 .idea/
+.vscode/
 
 cmake-build-*/
 
