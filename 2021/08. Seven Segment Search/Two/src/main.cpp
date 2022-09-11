@@ -96,7 +96,7 @@ static bool containsDuplicateCharacters(const std::string& str) noexcept
 
     for (const char c : str)
     {
-        ++counts[std::toupper(c) - 'A'];
+        ++counts[static_cast<std::size_t>(std::toupper(c) - 'A')];
     }
 
     for (const int count : counts)
@@ -150,24 +150,6 @@ public:
         }
     }
 
-    void print() const
-    {
-        for (std::size_t i{}; i < this->table.size(); ++i)
-        {
-            std::cout << static_cast<char>('A' + i) << " could be:\n";
-            for (std::size_t j{}; j < this->table[i].size(); ++j)
-            {   
-                if (this->table[i][j])
-                    std::cout << "[*] ";
-                else
-                    std::cout << "[ ] ";
-
-                std::cout << static_cast<char>('A' + j) << '\n';
-            }
-            std::cout << '\n';
-        }
-    }
-
     int findValidConfigs(const std::vector<std::string>& signals)
     {
         std::array<Segment, SEGMENT_COUNT> chosen{};
@@ -184,103 +166,6 @@ public:
         }
 
         return count;
-    }
-
-    void findValidConfigs(const Segment start, const std::vector<std::string>& signals, std::array<Segment, SEGMENT_COUNT>& chosen, int& count)
-    {
-        if (start == Segment::COUNT)
-        {
-            if (containsDuplicateSegments(chosen))
-                return;
-
-            bool allValid{true};
-
-            for (const std::string& signal : signals)
-            {
-                // H for debugging
-                std::string converted(signal.size(), 'H');
-
-                if (chosen[0] == Segment::C && chosen[1] == Segment::F && chosen[2] == Segment::G && chosen[3] == Segment::A &&
-                    chosen[4] == Segment::B && chosen[5] == Segment::D && chosen[6] == Segment::E)
-                {
-                    std::cout << "MATCH!\n";
-                }
-
-                for (std::size_t i{}; i < signal.size(); ++i)
-                {
-                    const std::size_t index{signal[i] - 'a'};
-                    converted[i] = segmentToChar(chosen[index]);
-                }
-
-                std::sort(converted.begin(), converted.end());
-
-                if (chosen[0] == Segment::C && chosen[1] == Segment::F && chosen[2] == Segment::G && chosen[3] == Segment::A &&
-                    chosen[4] == Segment::B && chosen[5] == Segment::D && chosen[6] == Segment::E)
-                {
-                    std::cout << "IN: " << signal << '\n';
-                    std::cout << "OUT: " << converted << '\n';
-                    std::cout << '\n';
-                }
-
-                if (!isValidSignal(converted))
-                {
-                    allValid = false;
-                    break;
-                }
-            }
-
-            if (allValid)
-            {
-                // std::cout << "VALID CONFIG FOUND!\n";
-                
-                // for (std::size_t i{}; i < chosen.size(); ++i)
-                // {
-                //     std::cout << static_cast<char>('A' + i) << ": " << static_cast<char>('A' + static_cast<char>(chosen[i])) << '\n';
-                // }
-                // std::cout << '\n';
-                
-                ++count;
-
-                this->solutionFound = true;
-            }
-            else
-            {
-                // std::cout << "INVALID CONFIG FOUND!\n";
-                
-                // for (std::size_t i{}; i < chosen.size(); ++i)
-                // {
-                //     std::cout << static_cast<char>('A' + i) << ": " << static_cast<char>('A' + static_cast<char>(chosen[i])) << '\n';
-                // }
-                // std::cout << '\n';
-            }
-        }
-        else
-        {
-            const std::size_t segIndex{static_cast<std::size_t>(start)};
-
-            for (std::size_t i{}; i < this->table[segIndex].size(); ++i)
-            {
-                // std::cout << "ON " << segmentToChar(start) << " CHECKING: " << static_cast<char>('A' + i) << ": " << this->table[segIndex][i] << '\n';
-
-                // if (this->table[segIndex][i] && std::find(chosen.begin(), chosen.begin() + segIndex + 1, static_cast<Segment>(i)) == chosen.begin() + segIndex + 1)
-                if (this->table[segIndex][i])
-                {
-                    chosen[segIndex] = static_cast<Segment>(i);
-                    findValidConfigs(start + 1, signals, chosen, count);
-
-                    if (this->solutionFound)
-                        return;
-                }
-            }
-        }
-    }
-
-    constexpr void addOption(const Segment input, const Segment output) noexcept
-    {
-        const std::size_t inputIndex{static_cast<std::size_t>(input)};
-        const std::size_t outputIndex{static_cast<std::size_t>(output)};
-
-        this->table[inputIndex][outputIndex] = true;
     }
 
     constexpr void removeOption(const Segment input, const Segment output) noexcept
@@ -340,6 +225,61 @@ private:
     std::array<std::array<bool, SEGMENT_COUNT>, SEGMENT_COUNT> table;
 
     bool solutionFound{};
+
+    void findValidConfigs(const Segment start, const std::vector<std::string>& signals, std::array<Segment, SEGMENT_COUNT>& chosen, int& count)
+    {
+        if (start == Segment::COUNT)
+        {
+            if (containsDuplicateSegments(chosen))
+                return;
+
+            bool allValid{true};
+
+            for (const std::string& signal : signals)
+            {
+                // H for debugging
+                std::string converted(signal.size(), 'H');
+
+                for (std::size_t i{}; i < signal.size(); ++i)
+                {
+                    const std::size_t index{static_cast<std::size_t>(signal[i] - 'a')};
+                    converted[i] = segmentToChar(chosen[index]);
+                }
+
+                std::sort(converted.begin(), converted.end());
+
+                if (!isValidSignal(converted))
+                {
+                    allValid = false;
+                    break;
+                }
+            }
+
+            if (allValid)
+            {   
+                ++count;
+
+                this->solutionFound = true;
+            }
+        }
+        else
+        {
+            const std::size_t segIndex{static_cast<std::size_t>(start)};
+
+            for (std::size_t i{}; i < this->table[segIndex].size(); ++i)
+            {
+                // if (this->table[segIndex][i] && std::find(chosen.begin(), chosen.begin() + segIndex + 1, static_cast<Segment>(i)) == chosen.begin() + segIndex + 1)
+                if (this->table[segIndex][i])
+                {
+                    chosen[segIndex] = static_cast<Segment>(i);
+                    findValidConfigs(start + 1, signals, chosen, count);
+
+                    if (this->solutionFound)
+                        return;
+                }
+            }
+        }
+    }
 };
 
 int main()
@@ -436,28 +376,12 @@ int main()
 
                     break;
                 }
-                // Number 8
-                // case 7:
-                // {
-                //     converter.set(signal[0], 'a');
-                //     converter.set(signal[1], 'b');
-                //     converter.set(signal[2], 'c');
-                //     converter.set(signal[3], 'd');
-                //     converter.set(signal[4], 'e');
-                //     converter.set(signal[5], 'f');
-                //     converter.set(signal[6], 'g');
-
-                //     break;
-                // }
             }
 
             signals.push_back(std::move(signal));
         }
 
-        // converter.print();
-
         const int validConfigCount{converter.findValidConfigs(signals)};
-        std::cout << "VALID CONFIG COUNT: " << validConfigCount << '\n';
         assert(validConfigCount == 1);
 
         int displayNumber{};
@@ -467,8 +391,6 @@ int main()
             std::string output;
             ss >> output;
 
-            std::cout << "Original: " << output << '\n';
-
             for (std::size_t j{}; j < output.size(); ++j)
             {
                 output[j] = segmentToChar(converter.convert(charToSegment(output[j])));
@@ -476,11 +398,7 @@ int main()
 
             std::sort(output.begin(), output.end());
 
-            std::cout << "Converted: " << output << '\n';
-            std::cout << "Int: " << displayToInt(output) << '\n';
-            std::cout << '\n';
-
-            displayNumber += displayToInt(output) * std::pow(10, i);
+            displayNumber += displayToInt(output) * static_cast<int>(std::pow(10, i));
         }
 
         answer += displayNumber;
