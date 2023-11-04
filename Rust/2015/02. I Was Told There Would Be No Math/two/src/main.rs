@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, i32};
 
 // Parse a string in the format of lxwxh (e.g. 5x16x32) into an array of the three numbers
 fn parse_dims(line: &str) -> [i32; 3] {
@@ -30,7 +30,7 @@ fn main() {
         let perimeters = [2 * (dims[0] + dims[1]), 2 * (dims[1] + dims[2]), 2 * (dims[2] + dims[0])];
 
         ribbon_needed += perimeters.iter().min().expect("Sides is empty");
-        ribbon_needed += dims[0] * dims[1] * dims[2];
+        ribbon_needed += dims.iter().product::<i32>();
     }
 
     println!("Result: {ribbon_needed}");
