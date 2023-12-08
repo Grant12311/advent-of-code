@@ -90,7 +90,7 @@ int main(const int argc, const char** const argv)
             }
         }
 
-        // Add lineId to total if game is possible
+        // Add line ID to total if game is possible
         if (possible)
             idSum += lineNum;
     }
