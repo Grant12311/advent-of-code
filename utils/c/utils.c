@@ -192,3 +192,16 @@ void bstMapForEach(BSTMap* const this, void(* const func)(void*, void*, void*), 
 {
     bstMapForEachHelper(this->root, func, arg);
 }
+
+static size_t bstMapSizeHelper(const struct BSTMapNode* const node)
+{
+    if (node == NULL)
+        return 0;
+    
+    return 1 + bstMapSizeHelper(node->left) + bstMapSizeHelper(node->right);
+}
+
+size_t bstMapSize(const BSTMap* const this)
+{
+    return bstMapSizeHelper(this->root);
+}

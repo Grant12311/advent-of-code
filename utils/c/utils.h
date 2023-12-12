@@ -38,5 +38,6 @@ void bstMapDestroy(BSTMap* this);
 void bstMapInsert(BSTMap* this, void* key, void* value);
 void* bstMapFind(BSTMap* this, const void* key);
 void bstMapForEach(BSTMap* this, void(*func)(void*, void*, void*), void* arg);
+size_t bstMapSize(const BSTMap* this);
 
 #endif
