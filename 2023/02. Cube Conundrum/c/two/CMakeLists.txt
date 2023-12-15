@@ -40,7 +40,7 @@ if (enableUBSanitizer)
     add_link_options(-fsanitize=undefined)
 endif ()
 
-add_executable(${name} src/main.c)
+add_executable(${name} src/main.c ../../../../utils/c/utils.c)
 
 target_include_directories(${name} PRIVATE include/)
 target_include_directories(${name} PRIVATE ../../../../utils/c)
