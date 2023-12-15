@@ -53,6 +53,8 @@ void dynamicArrayCreate(DynamicArray* this, size_t elementSize);
 void dynamicArrayDestroy(DynamicArray* this);
 const void* dynamicArrayIndex(const DynamicArray* this, size_t index);
 void dynamicArrayPushBack(DynamicArray* this, const void* elements, size_t count);
+void dynamicArrayResize(DynamicArray* this, size_t size);
 void dynamicArrayClear(DynamicArray* this);
+void dynamicArrayErase(DynamicArray* this, size_t index);
 
 #endif

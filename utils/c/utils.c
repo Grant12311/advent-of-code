@@ -225,23 +225,47 @@ const void* dynamicArrayIndex(const DynamicArray* const this, const size_t index
     return (const char*)this->array + this->elementSize * index;
 }
 
-void dynamicArrayPushBack(DynamicArray* const this, const void* const elements, const size_t count)
+static void dynamicArrayAllocate(DynamicArray* const this, const size_t capacity)
 {
-    if (this->size == this->capacity)
-    {
-        while (this->capacity < this->size + count)
-        {
-            this->capacity = this->capacity > 0 ? this->capacity * 2 : 1;
-        }
+    const size_t startingCapacity = this->capacity;
 
-        this->array = realloc(this->array, this->capacity * this->elementSize);
+    while (this->capacity < capacity)
+    {
+        this->capacity = this->capacity > 0 ? this->capacity * 2 : 1;
     }
 
+    if (this->capacity > startingCapacity)
+        this->array = realloc(this->array, this->capacity * this->elementSize);
+}
+
+void dynamicArrayPushBack(DynamicArray* const this, const void* const elements, const size_t count)
+{
+    dynamicArrayAllocate(this, this->size + count);
     memcpy((char*)this->array + this->size * this->elementSize, elements, this->elementSize * count);
     ++this->size;
+}
+
+void dynamicArrayResize(DynamicArray* const this, const size_t size)
+{
+    if (size <= this->size)
+    {
+        this->size = size;
+    }
+    else
+    {
+        dynamicArrayAllocate(this, size);
+        memset((char*)this->array + this->size * this->elementSize, 0, (size - this->size) * this->elementSize);
+        this->size = size;
+    }
 }
 
 void dynamicArrayClear(DynamicArray* const this)
 {
     this->size = 0;
+}
+
+void dynamicArrayErase(DynamicArray* const this, const size_t index)
+{
+    memmove((char*)this->array + index * this->elementSize, (const char*)this->array + (index + 1) * this->elementSize, (this->size - index - 1) * this->elementSize);
+    --this->size;
 }
