@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "utils.h"
 
@@ -204,4 +205,43 @@ static size_t bstMapSizeHelper(const struct BSTMapNode* const node)
 size_t bstMapSize(const BSTMap* const this)
 {
     return bstMapSizeHelper(this->root);
+}
+
+void dynamicArrayCreate(DynamicArray* const this, const size_t elementSize)
+{
+    this->elementSize = elementSize;
+    this->array = NULL;
+    this->size = 0;
+    this->capacity = 0;
+}
+
+void dynamicArrayDestroy(DynamicArray* const this)
+{
+    free(this->array);
+}
+
+const void* dynamicArrayIndex(const DynamicArray* const this, const size_t index)
+{
+    return (const char*)this->array + this->elementSize * index;
+}
+
+void dynamicArrayPushBack(DynamicArray* const this, const void* const elements, const size_t count)
+{
+    if (this->size == this->capacity)
+    {
+        while (this->capacity < this->size + count)
+        {
+            this->capacity = this->capacity > 0 ? this->capacity * 2 : 1;
+        }
+
+        this->array = realloc(this->array, this->capacity * this->elementSize);
+    }
+
+    memcpy((char*)this->array + this->size * this->elementSize, elements, this->elementSize * count);
+    ++this->size;
+}
+
+void dynamicArrayClear(DynamicArray* const this)
+{
+    this->size = 0;
 }

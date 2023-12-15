@@ -40,4 +40,19 @@ void* bstMapFind(BSTMap* this, const void* key);
 void bstMapForEach(BSTMap* this, void(*func)(void*, void*, void*), void* arg);
 size_t bstMapSize(const BSTMap* this);
 
+typedef struct
+{
+    size_t elementSize;
+
+    void* array;
+    size_t size;
+    size_t capacity;
+} DynamicArray;
+
+void dynamicArrayCreate(DynamicArray* this, size_t elementSize);
+void dynamicArrayDestroy(DynamicArray* this);
+const void* dynamicArrayIndex(const DynamicArray* this, size_t index);
+void dynamicArrayPushBack(DynamicArray* this, const void* elements, size_t count);
+void dynamicArrayClear(DynamicArray* this);
+
 #endif
