@@ -46,11 +46,12 @@ bool readNextLine(FILE* const file, LineBuffer* const buffer)
     const size_t needed = nextLineSize(file);
     if (needed == (size_t)-1)
         return false;
+
+    buffer->size = needed;
     
     if (buffer->capacity < needed + 1)
     {
         buffer->line = realloc(buffer->line, sizeof(char) * needed + 1);
-        buffer->size = needed;
         buffer->capacity = needed + 1;
     }
 
@@ -268,4 +269,20 @@ void dynamicArrayErase(DynamicArray* const this, const size_t index)
 {
     memmove((char*)this->array + index * this->elementSize, (const char*)this->array + (index + 1) * this->elementSize, (this->size - index - 1) * this->elementSize);
     --this->size;
+}
+
+const unsigned long long int* minull(const unsigned long long int* const array, const size_t size)
+{
+    if (size == 0)
+        return NULL;
+
+    const unsigned long long int* min = array;
+
+    for (size_t i = 1; i < size; ++i)
+    {
+        if (array[i] < *min)
+            min = array + i;
+    }
+
+    return min;
 }
