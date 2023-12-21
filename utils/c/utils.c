@@ -241,9 +241,12 @@ static void dynamicArrayAllocate(DynamicArray* const this, const size_t capacity
 
 void dynamicArrayPushBack(DynamicArray* const this, const void* const elements, const size_t count)
 {
+    if (count == 0)
+        return;
+ 
     dynamicArrayAllocate(this, this->size + count);
     memcpy((char*)this->array + this->size * this->elementSize, elements, this->elementSize * count);
-    ++this->size;
+    this->size += count;
 }
 
 void dynamicArrayResize(DynamicArray* const this, const size_t size)
@@ -282,6 +285,19 @@ const unsigned long long int* minull(const unsigned long long int* const array, 
     {
         if (array[i] < *min)
             min = array + i;
+    }
+
+    return min;
+}
+
+const void* min(const void* const array, const size_t elementSize, const size_t arraySize, bool(* const lessThan)(const void*, const void*))
+{
+    const void* min = array;
+    for (size_t i = 1; i < arraySize; ++i)
+    {
+        const void* const lhs = (const char*)array + i * elementSize;
+        if (lessThan(lhs, min))
+            min = lhs;
     }
 
     return min;

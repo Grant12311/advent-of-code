@@ -59,4 +59,6 @@ void dynamicArrayErase(DynamicArray* this, size_t index);
 
 const unsigned long long int* minull(const unsigned long long int* array, size_t size);
 
+const void* min(const void* array, size_t elementSize, size_t arraySize, bool(*lessThan)(const void*, const void*));
+
 #endif
