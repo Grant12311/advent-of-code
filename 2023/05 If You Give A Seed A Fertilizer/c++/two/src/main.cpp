@@ -68,7 +68,7 @@ int main(const int argc, const char** const argv)
     std::vector<bool> rangeConverted(seeds.size());
 
     // New breakaway ranges to insert into seeds after each seed is converted. Cleared after insertion
-    std::vector<SeedRange> newSeeds{readSeeds(infile)};
+    std::vector<SeedRange> newSeeds;
 
     // For each mapping
     for (std::string text; infile >> text;)
