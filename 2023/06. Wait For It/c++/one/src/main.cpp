@@ -33,7 +33,7 @@ static void readTimes(std::ifstream& infile, std::vector<Race>& races)
 }
 
 /**
- * @brief Read a series of distance values from infile in the format of "Time: 7 15 30" into races
+ * @brief Read a series of distance values from infile in the format of "Distance: 7 15 30" into races
  *        Values will be read until either input runs out of distances or races runs out of races
  *        std::runtime error will be thrown if infile does not start with a string
  * 
